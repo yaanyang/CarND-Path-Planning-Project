@@ -1,6 +1,37 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
+
+## Project Reflection
+### Generating Path Points
+The model code to generate path points is largely reference to project walkthrough. The code is from `line 382-486`: firstly, prepare two vectors `ptsx` and `ptsy` to store anchor points we obtain later for spline library to generate smooth curve. The starting point is current car state and one step before. If we have previous, then the last 2 points would become our starting points. (`line 393-416`)
+
+Next, we use map waypoints data to find positions are 30, 60 and 90 meters ahead and transform them to Frenet coordinates and also push back those 3 points into our vectors. (`line 418-430`)
+
+With these 5 points, we initiate a spine instance and fit in local car coordinates for easier calculation. To deal with latency and also avoid abrupt transition, we first put the previous path into our new path. Then we used our fitted spline to fill up the rest of total 50 path points. (`line 443-486`) The methodology is illustrated in the project walkthrough, we used 30m target distance ahead and reference velocity to calculate discrete points on the sline curve. The calculated points were then transformed back to global coordinates and push back to new path.
+
+The spline turned out working greate and generate smooth path points transistion to avoid large acceleration and jerk in order to pass the project requirements.
+
+### Lane Change Model
+The lane change algorithm code is at `line 286-380`.
+
+First, if we have previous path points, we will then use `end_path_s` and `end_path_d` to generate smooth path. Then, we use `car_d` to find the current lane and setup some flags to keep tracks on cars on left/righ and/or ahead for lane change reference. We also have a flag to determine if lane change action is desired. (`line 280-295`)
+
+Second, we loop through all detected vehicles from sensor fusion and extract their mobility data. Then, we calculate which lane each car is at according to the d value. (`line 297-330`)
+
+Next, for all the cars that is within -15 to +30 meters range of the ego car, we check if: (`line 332-357`)
+
+(1) Car is in the same lane, record car ahead and if its speed is slower than speed limit -5 MPH, flag `lane_change` as `true`.
+
+(2) Car is in left the lane, record car at the left.
+
+(3) Car is in the right lane, record car at the right.
+
+Lastly, if we see a car is close ahead (30m) and moving slower (speed limit -5), we first check if left or right lane is clear and safe to make a lane change. If so, we make a lane change, else we reduce the speed to avoid collision. If no close ahead car, and current speed is slow, we gradually increase speed to close but not exceeding speed limit. (`line 359-380`)
+
+### Performance
+Under simulator environment, my code works reasonalby good. It keeps the ego vehicle to gently accelerate/deccelerate and plan smooth path. There is no large/discomfort jerk nor collision to other vehicles. When driving behind slow vehicle, the ego car is able to make lane change and only does it when the adjacent lane is clear and safe to do so. 
+
+## Original Project README
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
 
