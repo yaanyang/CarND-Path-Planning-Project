@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "deque": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "fft": "cpp",
+        "array": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "hash_map": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp"
+    }
+}
